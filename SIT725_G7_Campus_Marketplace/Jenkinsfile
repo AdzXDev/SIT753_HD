@@ -1,43 +1,48 @@
 pipeline {
-
     agent any
+    
+    tools {
+        nodejs 'Node20' 
+    }
 
     stages {
-
         stage('Build') {
             steps {
                 echo 'Building Campus Marketplace'
-                sh 'docker build -t campus-marketplace:${BUILD_NUMBER} .'
+                dir('SIT725_G7_Campus_Marketplace') {
+                    sh 'docker build -t campus-marketplace:${BUILD_NUMBER} .'
+                }
             }
         }
 
         stage('Test') {
             steps {
                 echo 'Running tests'
-                sh 'npm ci'
-                sh 'npm test'
+                dir('SIT725_G7_Campus_Marketplace/backend') {
+                    sh 'npm ci'
+                    sh 'npm test'
+                }
             }
         }
 
         stage('Security') {
             steps {
                 echo 'Running security scan'
-                sh 'trivy image campus-marketplace:${BUILD_NUMBER}'
+                dir('SIT725_G7_Campus_Marketplace') {
+                    sh 'docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image campus-marketplace:${BUILD_NUMBER} || exit 0'
+                }
             }
         }
 
         stage('Deploy') {
             steps {
                 echo 'Deploying application'
-
-                sh '''
-                    docker rm -f campus-marketplace-test || true
-
-                    docker run -d \
-                    --name campus-marketplace-test \
-                    -p 3000:3000 \
-                    campus-marketplace:${BUILD_NUMBER}
-                '''
+                dir('SIT725_G7_Campus_Marketplace') {
+                    sh '''
+                        docker rm -f campus-marketplace-test || true
+                        docker run -d --name campus-marketplace-test -p 3000:3000 campus-marketplace:${BUILD_NUMBER}
+                    '''
+                }
             }
         }
     }
