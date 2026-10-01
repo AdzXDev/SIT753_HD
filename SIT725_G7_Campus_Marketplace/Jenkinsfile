@@ -1,0 +1,44 @@
+pipeline {
+
+    agent any
+
+    stages {
+
+        stage('Build') {
+            steps {
+                echo 'Building Campus Marketplace'
+                sh 'docker build -t campus-marketplace:${BUILD_NUMBER} .'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo 'Running tests'
+                sh 'npm ci'
+                sh 'npm test'
+            }
+        }
+
+        stage('Security') {
+            steps {
+                echo 'Running security scan'
+                sh 'trivy image campus-marketplace:${BUILD_NUMBER}'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo 'Deploying application'
+
+                sh '''
+                    docker rm -f campus-marketplace-test || true
+
+                    docker run -d \
+                    --name campus-marketplace-test \
+                    -p 3000:3000 \
+                    campus-marketplace:${BUILD_NUMBER}
+                '''
+            }
+        }
+    }
+}

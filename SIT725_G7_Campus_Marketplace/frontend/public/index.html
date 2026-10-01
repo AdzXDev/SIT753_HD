@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Campus Marketplace — Buy and sell within your campus</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <script src="js/nav.js"></script>
+  <script src="js/toast.js" defer></script>
+</head>
+<body>
+
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="masthead">
+    <div class="wrap masthead-inner">
+      <a href="index.html" class="brand">Campus <span>Marketplace</span></a>
+
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" aria-label="Open menu">
+        <span class="nav-toggle-bar"></span>
+      </button>
+
+      <nav class="primary-nav" id="primary-nav" aria-label="Main">
+        <a href="index.html">Browse</a>
+        <a href="create-listing.html">Sell an item</a>
+        <a href="my-listings.html" data-auth="in">My listings</a>
+        <a href="login.html" data-auth="out">Log in</a>
+        <!-- FR-03 Logout Functionality (handled by js/nav.js + js/logout.js) -->
+        <a href="#" data-auth="in" data-action="logout">Log out</a>
+        <span class="nav-user" data-auth="in" data-user-name></span>
+        <a href="register.html" class="btn btn-primary btn-sm" data-auth="out">Sign up</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+
+  <section class="hero">
+    <div class="wrap">
+
+      <div class="trust-note">
+        <span class="dot"></span>
+        Verified with your student email — no strangers off-campus
+      </div>
+
+      <h1>Buy and sell within your own campus</h1>
+
+      <p class="lede">
+        Textbooks, electronics, furniture and more — listed by students you can
+        actually trust, because everyone here verified with a university email.
+      </p>
+
+      <div class="search-row">
+        <label for="search-input" class="visually-hidden">Search listings</label>
+        <input
+          type="search"
+          id="search-input"
+          placeholder="Search listings, e.g. 'calculus textbook'"
+        />
+        <button id="search-btn" type="button">Search</button>
+      </div>
+
+      <div class="filters" id="category-filters" role="group" aria-label="Filter by category">
+        <button type="button" class="active" data-category="all">All</button>
+        <button type="button" data-category="textbooks">Textbooks</button>
+        <button type="button" data-category="electronics">Electronics</button>
+        <button type="button" data-category="furniture">Furniture</button>
+        <button type="button" data-category="bikes">Bikes</button>
+        <button type="button" data-category="other">Other</button>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="listings-section">
+    <div class="wrap">
+
+      <h2>Recently listed <span class="live-indicator" data-live-indicator hidden>Live</span></h2>
+
+
+      <!-- Cards are rendered from GET /api/listings by js/listings.js -->
+      <div class="listings-grid" id="listings-grid" aria-live="polite" aria-busy="true">
+        <p class="listings-note">Loading listings…</p>
+      </div>
+
+      <!-- Shown when a search/filter returns no results, or the request fails -->
+
+      <div
+        class="empty-state"
+        id="empty-state"
+        style="display: none;"
+      >
+        No listings match your search yet — try a different keyword or category.
+      </div>
+
+      <div
+        class="empty-state"
+        id="error-state"
+        style="display: none;"
+      >
+        Something went wrong loading listings — check your connection and try again.
+      </div>
+
+    </div>
+  </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-inner">
+      <span>Campus Marketplace — built by students, for students.</span>
+      <span class="online-count" data-online-count hidden></span>
+      <span class="footer-links">
+        <a href="#">About</a>
+        <a href="#">Safety tips</a>
+        <a href="#">Contact</a>
+      </span>
+    </div>
+  </footer>
+
+  <script src="js/listings.js"></script>
+
+  <!-- FR-03 Logout Functionality -->
+  <script src="js/logout.js"></script>
+
+  <!-- Real-time updates (Socket.IO client is served by the backend) -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/realtime.js"></script>
+
+</body>
+</html>
